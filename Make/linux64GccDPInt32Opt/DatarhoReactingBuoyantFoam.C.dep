@@ -1,5 +1,5 @@
-$(OBJECTS_DIR)/DatarhoReactingFoam.C.dep: \
-DatarhoReactingFoam.C \
+$(OBJECTS_DIR)/DatarhoReactingBuoyantFoam.C.dep: \
+DatarhoReactingBuoyantFoam.C \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/fvCFD.H \
 $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/parRun.H \
 $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/Pstream.H \
@@ -827,6 +827,9 @@ $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/initContinuityErrs.H \
 createFields.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createRDeltaT.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/compressibleCreatePhi.H \
+$(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readGravitationalAcceleration.H \
+$(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readhRef.H \
+$(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/gh.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createMRF.H \
 $(WM_PROJECT_DIR)/src/thermophysicalModels/radiation/lnInclude/createRadiationModel.H \
 createFieldRefs.H \
@@ -841,9 +844,8 @@ $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/rhoEqn.H \
 UEqn.H \
 YEqn.H \
 EEqn.H \
-pcEqn.H \
-$(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/compressibleContinuityErrs.H \
 pEqn.H \
+$(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/compressibleContinuityErrs.H \
 assimilation.H \
 
 

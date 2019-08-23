@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,11 +22,11 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    rhoReactingFoam
+    rhoReactingBuoyantFoam
 
 Description
-    Solver for combustion with chemical reactions using density based
-    thermodynamics package.
+    Solver for combustion with chemical reactions using a density based
+    thermodynamics package with enhanced buoyancy treatment.
 
 \*---------------------------------------------------------------------------*/
 
@@ -47,6 +47,7 @@ Description
 #include "analyticalRegion.H"
 #include <math.h>
 #include "Countlines.H"
+#include "fieldMinMax.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -107,14 +108,7 @@ int main(int argc, char *argv[])
             // --- Pressure corrector loop
             while (pimple.correct())
             {
-                if (pimple.consistent())
-                {
-                    #include "pcEqn.H"
-                }
-                else
-                {
-                    #include "pEqn.H"
-                }
+                #include "pEqn.H"
             }
 
             if (pimple.turbCorr())

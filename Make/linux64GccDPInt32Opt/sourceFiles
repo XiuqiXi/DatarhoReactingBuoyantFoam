@@ -1,2 +1,2 @@
 SOURCE = \
-DatarhoReactingFoam.C 
+DatarhoReactingBuoyantFoam.C 

@@ -52,7 +52,7 @@ volScalarField& p = thermo.p();
 
 #include "compressibleCreatePhi.H"
 
-pressureControl pressureControl(p, rho, pimple.dict(), false);
+//pressureControl pressureControl(p, rho, pimple.dict(), false);
 
 mesh.setFluxRequired(p.name());
 
@@ -71,6 +71,26 @@ autoPtr<compressible::turbulenceModel> turbulence
 // Set the turbulence into the reaction model
 reaction->setTurbulence(turbulence());
 
+#include "readGravitationalAcceleration.H"
+#include "readhRef.H"
+#include "gh.H"
+
+Info<< "Reading field p_rgh\n" << endl;
+volScalarField p_rgh
+(
+    IOobject
+    (
+        "p_rgh",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
+
+// Force p_rgh to be consistent with p
+p_rgh = p - rho*gh;
 
 Info<< "Creating field dpdt\n" << endl;
 volScalarField dpdt

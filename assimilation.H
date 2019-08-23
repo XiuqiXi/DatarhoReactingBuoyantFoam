@@ -46,7 +46,7 @@
 		Info<<endl;
 
 
-		Info<<"The average value of the heat flux is "<<averageHeatBC<<endl;
+		Info<<"The average value of the heat flux  is "<<averageHeatBC<<endl;
 		Info<<endl;
 
 		/*
@@ -88,7 +88,7 @@
 		scalar interfaceTemperature;
 		Droplet.calculateTemperature();
 		interfaceTemperature = Droplet.interfaceTemperature_;
-		if(mesh.time().value()<0.05){interfaceTemperature = 375;}
+		if(mesh.time().value()<0.05){interfaceTemperature = 371;}
 		Info<<"interfaceTemperature is "<<interfaceTemperature<<endl;
 
 		T.boundaryFieldRef()[patchID] == interfaceTemperature;
@@ -103,6 +103,10 @@
 		Info<<"B number is "<<analyticalRegion::B<<endl;
 
 		//Info<<"C3H8 boundary condition is "<<fuel<<endl;
+
+		//calculate the maximun Qdot
+		//functionObjects::fieldMinMax fieldMinMax1();
+
 
 		//write the mass flux data into AverageMassFlux file
 		std::ofstream file_velocity;
@@ -157,6 +161,14 @@
 
 			file.close();
 
+			std::ofstream file_1;
+
+			file_1.open("Coefficient", std::ofstream::out | std::ofstream::app);
+
+			file_1<<runTime.timeName()<<token::TAB<<analyticalRegion::coeff<<std::endl;
+
+			file_1.close();
+
 			assimilationTimeIndex++;
 		}
 
@@ -174,6 +186,14 @@
 			file<<runTime.timeName()<<token::TAB<<assimilationTimeIndex<<token::TAB<<data[assimilationTimeIndex][0]<<token::TAB<<data[assimilationTimeIndex][1]<<std::endl;
 
 			file.close();
+
+			std::ofstream file_1;
+
+			file_1.open("Coefficient", std::ofstream::out | std::ofstream::app);
+
+			file_1<<runTime.timeName()<<token::TAB<<analyticalRegion::coeff<<std::endl;
+
+			file_1.close();
 
 			assimilationTimeIndex++;
 		}

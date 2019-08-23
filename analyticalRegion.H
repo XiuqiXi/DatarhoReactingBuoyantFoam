@@ -103,6 +103,8 @@ public:
    scalar K_;
    scalar FSR_;
 
+   static scalar coeff;
+
     // Constructors
 
         //- Construct from Time

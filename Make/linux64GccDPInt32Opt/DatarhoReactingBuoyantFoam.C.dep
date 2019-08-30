@@ -830,6 +830,8 @@ $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/compressibleCreatePhi.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readGravitationalAcceleration.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readhRef.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/gh.H \
+$(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readpRef.H \
+phrghEqn.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createMRF.H \
 $(WM_PROJECT_DIR)/src/thermophysicalModels/radiation/lnInclude/createRadiationModel.H \
 createFieldRefs.H \

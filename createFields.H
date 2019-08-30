@@ -33,6 +33,20 @@ volScalarField rho
     thermo.rho()
 );
 
+Info<< "Reading field p_rgh\n" << endl;
+volScalarField p_rgh
+(
+    IOobject
+    (
+        "p_rgh",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
+
 Info<< "Reading field U\n" << endl;
 volVectorField U
 (

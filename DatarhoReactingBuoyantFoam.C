@@ -48,6 +48,7 @@ Description
 #include <math.h>
 #include "Countlines.H"
 #include "fieldMinMax.H"
+#include "singlePhaseTransportModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

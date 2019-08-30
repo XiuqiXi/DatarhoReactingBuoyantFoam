@@ -48,13 +48,14 @@ volVectorField U
 );
 
 
-volScalarField& p = thermo.p();
+//volScalarField& p = thermo.p();
 
 #include "compressibleCreatePhi.H"
 
-//pressureControl pressureControl(p, rho, pimple.dict(), false);
+#include "readTransportProperties.H"
 
-mesh.setFluxRequired(p.name());
+
+
 
 Info << "Creating turbulence model.\n" << nl;
 autoPtr<compressible::turbulenceModel> turbulence
@@ -70,6 +71,34 @@ autoPtr<compressible::turbulenceModel> turbulence
 
 // Set the turbulence into the reaction model
 reaction->setTurbulence(turbulence());
+
+// Kinematic density for buoyancy force
+volScalarField rhok
+(
+    IOobject
+    (
+        "rhok",
+        runTime.timeName(),
+        mesh
+    ),
+    beta*TRef
+    //1.0 - beta*(T - TRef)
+);
+
+// kinematic turbulent thermal thermal conductivity m2/s
+Info<< "Reading field alphat\n" << endl;
+volScalarField alphat
+(
+    IOobject
+    (
+        "alphat",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
 
 #include "readGravitationalAcceleration.H"
 #include "readhRef.H"
@@ -91,9 +120,45 @@ volScalarField p_rgh
 );
 
 mesh.setFluxRequired(p_rgh.name());
-
+/*
 #include "phrghEqn.H"
-Info<<"GTY is SB"<<endl;
+Info<<"GTY is SB"<<endl;*/
+
+volScalarField p
+(
+    IOobject
+    (
+        "p",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    p_rgh + rhok*gh
+);
+
+label pRefCell = 0;
+scalar pRefValue = 0.0;
+setRefCell
+(
+    p,
+    p_rgh,
+    pimple.dict(),
+    pRefCell,
+    pRefValue
+);
+
+if (p_rgh.needReference())
+{
+    p += dimensionedScalar
+    (
+        "p",
+        p.dimensions(),
+        pRefValue - getRefCellValue(p, pRefCell)
+    );
+}
+
+mesh.setFluxRequired(p_rgh.name());
 
 Info<< "Creating field dpdt\n" << endl;
 volScalarField dpdt

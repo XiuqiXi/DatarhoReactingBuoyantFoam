@@ -809,6 +809,8 @@ analyticalREgionI.H \
 Countlines.H \
 fieldMinMax.H \
 fieldMinMaxTemplates.C \
+$(WM_PROJECT_DIR)/src/transportModels/incompressible/singlePhaseTransportModel/singlePhaseTransportModel.H \
+$(WM_PROJECT_DIR)/src/transportModels/incompressible/transportModel/transportModel.H \
 $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/postProcess.H \
 $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/addRegionOption.H \
 $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/addFunctionObjectOptions.H \
@@ -827,11 +829,11 @@ $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/initContinuityErrs.H \
 createFields.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createRDeltaT.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/compressibleCreatePhi.H \
+readTransportProperties.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readGravitationalAcceleration.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readhRef.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/gh.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readpRef.H \
-phrghEqn.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createMRF.H \
 $(WM_PROJECT_DIR)/src/thermophysicalModels/radiation/lnInclude/createRadiationModel.H \
 createFieldRefs.H \
@@ -847,7 +849,7 @@ UEqn.H \
 YEqn.H \
 EEqn.H \
 pEqn.H \
-$(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/compressibleContinuityErrs.H \
+$(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/continuityErrs.H \
 assimilation.H \
 
 

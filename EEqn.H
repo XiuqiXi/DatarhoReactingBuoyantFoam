@@ -32,6 +32,8 @@
 
     thermo.correct();
 
+    rhok = 1.0 - beta*(T - TRef);
+
     Info<< "min/max(T) = "
         << min(T).value() << ", " << max(T).value() << endl;
 }

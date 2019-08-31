@@ -33,6 +33,22 @@ volScalarField rho
     thermo.rho()
 );
 
+Info<< "Reading field p_rgh\n" << endl;
+volScalarField p_rgh
+(
+    IOobject
+    (
+        "p_rgh",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
+
+//mesh.setFluxRequired(p_rgh.name());
+
 Info<< "Reading field U\n" << endl;
 volVectorField U
 (
@@ -105,21 +121,7 @@ volScalarField alphat
 #include "gh.H"
 #include "readpRef.H"
 
-Info<< "Reading field p_rgh\n" << endl;
-volScalarField p_rgh
-(
-    IOobject
-    (
-        "p_rgh",
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);
 
-mesh.setFluxRequired(p_rgh.name());
 /*
 #include "phrghEqn.H"
 Info<<"GTY is SB"<<endl;*/

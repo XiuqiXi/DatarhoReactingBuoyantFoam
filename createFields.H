@@ -1,6 +1,6 @@
 #include "createRDeltaT.H"
 
-Info<< "Creating reaction model\n" << endl;
+Info<< "Creating reaction model \n" << endl;
 
 autoPtr<combustionModels::rhoCombustionModel> reaction
 (

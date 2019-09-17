@@ -1,6 +1,8 @@
 # DatarhoReactingBuoyantFoam
-Data assimilation for the droplet combustion with buoyancy
+This version of simulation is to calculate the droplet combustion, which is the simplest case, one dimension, including the influence of buoyancy.
 
-These branch tries to apply the low-Mach assumptions to the DatarhoReactingBuoyantFoam for simplifications to reduce the computational resources . 
+DatarhoReactingBuoyantFoam.C is modified from rhoReactingBuoyantFoam.C including dataimport.H analyticalRegion.H, assimilation.H,
 
-Moreover, with SIMPLE method to calculate the pressure, the correct boundary conditions are hard to get.  
+dataImport.H is to import the droplet size data from the data file. Countlines.H is to count the lines of data, coupled with the data import H file.
+
+assimilation.H is the core part to exchange the heat and mass flux between the CFD region and analytical region. analyticalRegion.H claims the class, the data and member functions. analyticalRegionI.H defines the member functions including the calculation of boundary conditions.

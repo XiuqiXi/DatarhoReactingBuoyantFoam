@@ -1,1 +1,1 @@
-EXE = $(FOAM_APPBIN)/DatarhoReactingFoam
+EXE = $(FOAM_APPBIN)/DatarhoReactingBuoyantFoam

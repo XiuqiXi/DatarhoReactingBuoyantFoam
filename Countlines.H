@@ -19,4 +19,5 @@ int Countlines(char *filename)
 }
 
 scalar analyticalRegion::B = 0.1;
-scalar analyticalRegion::rho_l = 684;
+scalar analyticalRegion::rho_l = 700;
+scalar analyticalRegion::coeff = 1;

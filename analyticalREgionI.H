@@ -5,22 +5,22 @@ void analyticalRegion::calculateMassFlux(){
 
 	R0square=sqr(R0);
 
-	K = 2*k_g/rho_l/c_pg*log(B+1);
+	K = 2 * k_g / rho_l / c_pg * log(B + 1);
 	Info<<"The liquid density is "<<rho_l<<endl;
 	K_ = K;
 	B_ = B;
 	Info<<"K is "<<K<<endl;
-	Rsquare = R0square-coeff*K*Time_;
+	Rsquare = R0square-coeff * K * Time_;
 	R = sqrt(Rsquare);
 	R_ = R;
 
 	q_dot_pp_R0 = heatFlux_;
 	q_dot_pp_R = q_dot_pp_R0*R0square/Rsquare;
 
-	m_dot_pp_R = B*q_dot_pp_R/(Y_O_infty*stoi_ratio*Delta_H+c_pg*(T_infty-T_boil));
+	m_dot_pp_R = B * q_dot_pp_R / (Y_O_infty * stoi_ratio * Delta_H + c_pg * (T_infty - T_boil));
 	//m_dot_pp_R = q_dot_pp_R/(L+c_pl*(T_boil-T_infty));
 
-	m_dot_pp_R0 = m_dot_pp_R*Rsquare/R0square;
+	m_dot_pp_R0 = m_dot_pp_R * Rsquare / R0square;
 
 	//B = exp(m_dot_pp_R*R*c_pg/k_g)-1;
 
@@ -40,7 +40,7 @@ void analyticalRegion::calculateMassFlux(){
 	Info<<"The radius of the droplet is "<<R<<endl;
 	Info<<"The K is "<<K<<endl;
 
-	FSR = log(B+1)/log(stoi_ratio*Y_O_infty+1);
+	FSR = log(B+1) / log(stoi_ratio * Y_O_infty + 1);
 	FSR_ = FSR;
 
 	Info<<"The FSR is "<<FSR<<endl;
@@ -51,7 +51,7 @@ void analyticalRegion::calculateTemperature(){
 	scalar Part_1;
 	//scalar Part_6;
 
-	Part_1 = pow((B+1),(1-R/R0));
+	Part_1 = pow((B + 1),(1 - R / R0));
 	//Part_1 = exp(-m_dot_pp_R*Rsquare/k_g*c_pg/R0);
 	//Part_6 = c_pg*(T_infty-T_boil)+Delta_H*stoi_ratio*Y_O_infty+L;
 	interfaceTemperature_ = L*(Part_1-1)/c_pg+T_boil;;
@@ -62,8 +62,8 @@ void analyticalRegion::calculateTemperature(){
 void analyticalRegion::calculateFuel(){
 	scalar Part_2;
 
-	Part_2 = 1-exp(-m_dot_pp_R*Rsquare/k_g*c_pg/R0);
-	interfaceFuel_ = (1+stoi_ratio*Y_O_infty)*Part_2-stoi_ratio*Y_O_infty;
+	Part_2 = 1 - exp(-m_dot_pp_R * Rsquare / k_g * c_pg / R0);
+	interfaceFuel_ = (1 + stoi_ratio * Y_O_infty) * Part_2 - stoi_ratio * Y_O_infty;
 	if(interfaceFuel_<0){interfaceFuel_ = 0.01;}
 
 }
@@ -71,7 +71,7 @@ void analyticalRegion::calculateFuel(){
 void analyticalRegion::calculateOxygen(){
 	scalar Part_5;
 
-	Part_5 = exp(-m_dot_pp_R*Rsquare/k_g*c_pg/R0)-1;
+	Part_5 = exp(-m_dot_pp_R * Rsquare / k_g * c_pg/R0) - 1;
 
 	interfaceOxygen_ = (1+stoi_ratio*Y_O_infty)*Part_5/stoi_ratio+Y_O_infty;
 }
@@ -82,12 +82,12 @@ void analyticalRegion::calculateAssimilation_FSR()
 	scalar B_temp;
 	scalar observedK;
 
-	ln_Bplus1 = observation_*log(stoi_ratio*Y_O_infty+1);
-	B_temp = exp(ln_Bplus1)-1;
+	ln_Bplus1 = observation_ * log(stoi_ratio * Y_O_infty + 1);
+	B_temp = exp(ln_Bplus1) - 1;
 
-	observedK = 2*k_g/rho_l/c_pg*log(B_temp+1);
+	observedK = 2 * k_g / rho_l / c_pg * log(B_temp + 1);
 
-	coeff = observedK/K;
+	coeff = observedK / K;
 
 	if(coeff<0){coeff = 1;}
 
@@ -100,8 +100,8 @@ void analyticalRegion::calculateAssimilation_dropletSize()
 
 	scalar observedK;
 
-	observedK = (R0square-observation_)/Time_;
-	coeff = observedK/K;
+	observedK = (R0square-observation_) / Time_;
+	coeff = observedK / K;
 
 	if(coeff<0){coeff = 1;}
 

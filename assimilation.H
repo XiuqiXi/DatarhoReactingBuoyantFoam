@@ -80,7 +80,7 @@
 
 		//update the normal velocity
 		//if(velocity_inject < 0){velocity_inject = 0.001;}
-		//if(mesh.time().value()<0.05){velocity_inject = 0.00;}
+		if(mesh.time().value()<0.1){velocity_inject = 0.001;}
 		Upatch.refValue_=-velocity_inject;
 
 		//update the temperature
@@ -96,7 +96,7 @@
 		scalar interfaceFuel;
 		Droplet.calculateFuel();
 		interfaceFuel = Droplet.interfaceFuel_;
-		//if(mesh.time().value()<0.1){interfaceFuel = 0.2;}
+		if(mesh.time().value()<0.1){interfaceFuel = 0.2;}
 		Info<<"interfaceFuel is "<<interfaceFuel<<endl;
 		composition.Y("C7H16").boundaryFieldRef()[patchID] == interfaceFuel;
 

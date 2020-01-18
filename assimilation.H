@@ -84,7 +84,8 @@
 		forAll(mesh.boundaryMesh()[patchID].faceCentres(), faceI)
 		{
 			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();;
-			U_patch[faceI] = ( (y<0.14) ? vector(0.002, 0.2, 0) : vector(0, 0, 0));
+			U_patch[faceI] = ( (y<0.6) ? vector(0.002, 0.2, 0) : vector(0, 0, 0));
+			Info<<"The velocity changes"<<endl;
 		}
 
 		//update the temperature

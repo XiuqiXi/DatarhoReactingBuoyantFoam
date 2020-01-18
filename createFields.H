@@ -173,11 +173,11 @@ volScalarField wallMassFlux
     dimensionedScalar("wallMassFlux", dimMass/pow3(dimTime), 0.0)
 );
 
-IOdictionary dropletProperties
+IOdictionary analyticalRegionProperties
 (
     IOobject
     (
-        "dropletProperties",
+        "analyticalRegionProperties",
         runTime.constant(),
         mesh,
         IOobject::MUST_READ_IF_MODIFIED,
@@ -188,18 +188,19 @@ IOdictionary dropletProperties
 dimensionedScalar originalDropletSize
 (
 	"originalDropletSize",
-	dropletProperties.lookup("originalDropletSize")
+	analyticalRegionProperties.lookup("originalDropletSize")
 );
 
-bool assimilationActivation = readBool(dropletProperties.lookup("assimilationActivation"));
 
-word assimilationDataType = word(dropletProperties.lookup("assimilationDataType"));
+//bool assimilationActivation = readBool(analyticalRegionProperties.lookup("assimilationActivation"));
 
-//word assimilationDataName = word(dropletProperties.lookup("assimilationDataName"));
+//word assimilationDataType = word(analyticalRegionProperties.lookup("assimilationDataType"));
 
-word interfaceName = word(dropletProperties.lookup("interface"));
+//word assimilationDataName = word(analyticalRegionProperties.lookup("assimilationDataName"));
 
-analyticalRegion::B = readScalar(dropletProperties.lookup("initialBNumber"));
+word interfaceName = word(analyticalRegionProperties.lookup("interface"));
+
+analyticalRegion::B = readScalar(analyticalRegionProperties.lookup("initialBNumber"));
 
 #include "createMRF.H"
 #include "createRadiationModel.H"

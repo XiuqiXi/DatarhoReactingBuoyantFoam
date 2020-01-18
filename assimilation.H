@@ -76,12 +76,16 @@
 		Info<<endl;
 
 		//Cast the boundary patch into the surfaceNormalFixed object
-		surfaceNormalFixedValueFvPatchVectorField& Upatch = refCast<surfaceNormalFixedValueFvPatchVectorField>(U.boundaryFieldRef()[patchID]);
+		//const fvPatchVectorField& Cf = mesh.Cf().boundaryField()[patchID];
+		fvPatchVectorField& U_patch = refCast<fvPatchVectorField>(U.boundaryFieldRef()[patchID]);
 
 		//update the normal velocity
 		//if(velocity_inject < 0){velocity_inject = 0.001;}
-		if(mesh.time().value()<0.1){velocity_inject = 0.001;}
-		Upatch.refValue_=-velocity_inject;
+		forAll(mesh.boundaryMesh()[patchID].faceCentres(), faceI)
+		{
+			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();;
+			U_patch[faceI] = ( (y<0.14) ? vector(0.002, 0.2, 0) : vector(0, 0, 0));
+		}
 
 		//update the temperature
 
@@ -107,96 +111,6 @@
 		//calculate the maximun Qdot
 		//functionObjects::fieldMinMax fieldMinMax1();
 
-
-		//write the mass flux data into AverageMassFlux file
-		std::ofstream file_velocity;
-
-		file_velocity.open("InjectionVelocity", std::ofstream::out | std::ofstream::app);
-
-		file_velocity<<runTime.timeName()<<token::TAB<<velocity_inject<<std::endl;
-
-		file_velocity.close();
-
-		//write the droplet properties
-		std::ofstream file_droplet;
-
-		file_droplet.open("DropletProperties",std::ofstream::out | std::ofstream::app);
-
-		file_droplet<<runTime.timeName()<<token::TAB<<Droplet.R_<<token::TAB<<interfaceTemperature<<token::TAB<<interfaceFuel<<token::TAB<<Droplet.B_<<token::TAB<<Droplet.K_<<std::endl;
-
-		file_droplet.close();
-
-		//write the heat flux
-		std::ofstream file_heatFlux;
-
-		file_heatFlux.open("HeatFlux", std::ofstream::out | std::ofstream::app);
-
-		file_heatFlux<<runTime.timeName()<<token::TAB<<maxHfp<<token::TAB<<minHfp<<token::TAB<<averageHeatBC<<std::endl;
-
-		file_heatFlux.close();
-
-		//write the mass flux
-		std::ofstream file_massFlux;
-
-		file_massFlux.open("MassFlux", std::ofstream::out | std::ofstream::app);
-
-		file_massFlux<<runTime.timeName()<<token::TAB<<averageMassBC<<token::TAB<<Droplet.B_<<std::endl;
-
-		file_massFlux.close();
-
-		//Assimilation Loop
-
-		if((std::abs(mesh.time().value() - data[assimilationTimeIndex][0])<0.001) && assimilationActivation == true && assimilationDataType == "dropletSize")
-		{
-
-			assimilationObservation = data[assimilationTimeIndex][1];
-
-			Droplet.calculateAssimilation_dropletSize();
-
-			std::ofstream file;
-
-			file.open("assimilationData", std::ofstream::out | std::ofstream::app);
-
-			file<<runTime.timeName()<<token::TAB<<assimilationTimeIndex<<token::TAB<<data[assimilationTimeIndex][0]<<token::TAB<<data[assimilationTimeIndex][1]<<token::TAB<<std::endl;
-
-			file.close();
-
-			std::ofstream file_1;
-
-			file_1.open("Coefficient", std::ofstream::out | std::ofstream::app);
-
-			file_1<<runTime.timeName()<<token::TAB<<analyticalRegion::coeff<<std::endl;
-
-			file_1.close();
-
-			assimilationTimeIndex++;
-		}
-
-		if((std::abs(mesh.time().value() - data[assimilationTimeIndex][0])<0.001) && assimilationActivation == true && assimilationDataType == "FSR")
-		{
-
-			assimilationObservation = data[assimilationTimeIndex][1];
-
-			Droplet.calculateAssimilation_FSR();
-
-			std::ofstream file;
-
-			file.open("assimilationData", std::ofstream::out | std::ofstream::app);
-
-			file<<runTime.timeName()<<token::TAB<<assimilationTimeIndex<<token::TAB<<data[assimilationTimeIndex][0]<<token::TAB<<data[assimilationTimeIndex][1]<<std::endl;
-
-			file.close();
-
-			std::ofstream file_1;
-
-			file_1.open("Coefficient", std::ofstream::out | std::ofstream::app);
-
-			file_1<<runTime.timeName()<<token::TAB<<analyticalRegion::coeff<<std::endl;
-
-			file_1.close();
-
-			assimilationTimeIndex++;
-		}
 
 
 		Info<<"The index is "<<	assimilationTimeIndex <<endl;

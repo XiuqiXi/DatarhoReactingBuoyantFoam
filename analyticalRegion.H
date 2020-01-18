@@ -93,6 +93,8 @@ class analyticalRegion
     scalar D_c = 1.2;
     scalar r = Y_O_infty*stoi_ratio/Y_fw;
     scalar J_fl = 1/(1+1/r);
+    scalar T_fl = (T_boil-T_infty)*((1-D_c)*J_fl+D_c)+T_infty;
+    scalar rho_fl = rho_infty*T_infty/T_fl;
 
     //calcuate assisting parameters
     scalar inter = 4/5*B*(pow(J_fl, 5/3)-1)-2*(pow(J_fl, 2/3)-1)*(B+tau);
@@ -100,7 +102,9 @@ class analyticalRegion
     scalar M_2 = -48*mu*log(1+B)/B/rho_boil;
     scalar M_3 = 40*(B+1)*log(1+B)*k_g/B/c_pg/rho_infty;
 
-    //scalar delta_1 = ((M_3^2-M_2*M_3)/M_1)^(1/4);
+    scalar delta_1 = pow((M_3*M_3-M_2*M_3)/M_1,1/4);
+
+    scalar u_1 = M_3/pow(((M_3*M_3-M_2*M_3)/M_1), 1/2);
 
     //p represents prime notation
     scalar q_dot_pp_R;

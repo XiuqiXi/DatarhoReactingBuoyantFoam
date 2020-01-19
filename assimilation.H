@@ -11,8 +11,6 @@
 		volScalarField& he = thermo.he();
 		const volScalarField& alpha = thermo.alpha();
 
-		Info<<"The maximun of alpha is "<<gMax(alpha.boundaryField()[patchID])<<"The minimun of alpha is "<<gMin(alpha.boundaryField()[patchID])<<endl;
-
 		//the heat flux of each surfaces of each volumes
 		heatFlux = fvc::interpolate(alpha)*fvc::snGrad(he);
 
@@ -34,20 +32,29 @@
 		wallHeatFluxBf[patchID] = heatFluxBf[patchID];
 		wallHeatFlux = -wallHeatFlux;
 		const scalarField& hfp = wallHeatFlux.boundaryField()[patchID];
+
+		forAll(mesh.boundaryMesh()[patchID].faceCentres(), faceI)
+		{
+			//Get the coordinate
+			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
+			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
+			//Find the location of preheat ergion
+			/*if (hfp[faceI]>10000){
+				Info<<"The location of preheat region is "<<y<<endl;
+				break;
+			}*/
+
+			Info<<hfp[faceI]<<endl;
+			//Info<<y<<endl;
+
+		}
+
+
 		//the average heat
 		minHfp = gMin(hfp);
 		maxHfp = gMax(hfp);
 		meanHfp = (minHfp+maxHfp)/2;
 		averageHeatBC = meanHfp;
-
-		Info<<endl;
-		Info<<"The minimun value of "<<patchID<< " the heat flux is "<<minHfp<<endl;
-		Info<<"The maximun value of "<<patchID<<" the heat flux is "<<maxHfp<<endl;
-		Info<<endl;
-
-
-		Info<<"The average value of the heat flux  is "<<averageHeatBC<<endl;
-		Info<<endl;
 
 
 
@@ -62,11 +69,11 @@
 			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
 			scalar x_original = x+0.000002;
 			scalar y_original = y+0.002;
-			Info<<"Test"<<endl;
+			//Info<<"Test"<<endl;
 
 			//Construct the analytical region
 			analyticalRegion nearWallRegion(x_original, y_original);
-			Info<<"value is "<<nearWallRegion.testValue<<endl;
+			//Info<<"value is "<<nearWallRegion.testValue<<endl;
 			//Get the velocity
 			nearWallRegion.calculateStreamwiseVelocity();
 			scalar streamwiseVelocity = nearWallRegion.streamwiseVelocity_;
@@ -74,7 +81,7 @@
 			scalar transverseVelocity = nearWallRegion.transverseVelocity_;
 			Info<<"x is "<<x_original<<endl;
 			Info<<"y is "<<y_original<<endl;
-			Info<<"V is "<<streamwiseVelocity<<endl;
+			Info<<"V is "<<transverseVelocity<<endl;
 			//Set the velocity
 			U_patch[faceI] = ( (y<0.6) ? vector(streamwiseVelocity, transverseVelocity, 0) : vector(0, 0, 0));
 

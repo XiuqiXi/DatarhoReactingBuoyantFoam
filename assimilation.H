@@ -56,54 +56,86 @@
 		//claim yhe Droplet class
 
 
-		analyticalRegion Droplet(averageHeatBC,mesh.time().value(),originalDropletSize.value(),assimilationObservation);
+		//analyticalRegion Droplet(averageHeatBC,mesh.time().value(),originalDropletSize.value(),assimilationObservation);
 
 
-		Droplet.calculateMassFlux();
-		averageMassBC = Droplet.massFlux_;
-		Info<<"The original size of the droplet is "<<Droplet.R0<<endl;
-		/*
-		end of calculating the mass flux
-		*/
-
-		Info<<"The average mass flux is "<<averageMassBC<<endl;
-
-		//The injection velocity of the boundary
-		scalar velocity_inject=averageMassBC/1;
-
-		//mapping the calculated value on the velocity boundary condition
-
-		Info<<endl;
-
-		//Cast the boundary patch into the surfaceNormalFixed object
-		//const fvPatchVectorField& Cf = mesh.Cf().boundaryField()[patchID];
+		//Define the velocity boundary condition object
 		fvPatchVectorField& U_patch = refCast<fvPatchVectorField>(U.boundaryFieldRef()[patchID]);
 
-		//update the normal velocity
-		//if(velocity_inject < 0){velocity_inject = 0.001;}
+		//Cast calculated velocity to each cell on the patch
 		forAll(mesh.boundaryMesh()[patchID].faceCentres(), faceI)
 		{
-			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();;
-			U_patch[faceI] = ( (y<0.6) ? vector(0.002, 0.2, 0) : vector(0, 0, 0));
-			Info<<"The velocity changes"<<endl;
+			//Get the coordinate
+			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
+			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
+			scalar x_original = x+0.000002;
+			scalar y_original = y+0.002;
+			Info<<"Test"<<endl;
+
+			//Construct the analytical region
+			analyticalRegion nearWallRegion(averageHeatBC,mesh.time().value(),originalDropletSize.value(),assimilationObservation, x_original, y_original);
+			Info<<"value is "<<nearWallRegion.testValue<<endl;
+			//Get the velocity
+			nearWallRegion.calculateStreamwiseVelocity();
+			scalar streamwiseVelocity = nearWallRegion.streamwiseVelocity_;
+			nearWallRegion.calculateTransverseVelocity();
+			scalar transverseVelocity = nearWallRegion.transverseVelocity_;
+			Info<<"x is "<<x_original<<endl;
+			Info<<"y is "<<y_original<<endl;
+			Info<<"V is "<<streamwiseVelocity<<endl;
+			//Set the velocity
+			U_patch[faceI] = ( (y<0.6) ? vector(streamwiseVelocity, transverseVelocity, 0) : vector(0, 0, 0));
+
 		}
+		Info<<"The velocity changes"<<endl;
 
 		//update the temperature
+		//Define the temperature boundary condition object
+		fvPatchScalarField& T_patch = refCast<fvPatchScalarField>(T.boundaryFieldRef()[patchID]);
 
-		scalar interfaceTemperature;
-		Droplet.calculateTemperature();
-		interfaceTemperature = Droplet.interfaceTemperature_;
-		if(mesh.time().value()<0.05){interfaceTemperature = 371;}
-		Info<<"interfaceTemperature is "<<interfaceTemperature<<endl;
+		//Cast calculated temperature to each cell on the patch
+		forAll(mesh.boundaryMesh()[patchID].faceCentres(), faceI)
+		{
+			//Get the coordinate
+			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
+			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
+			scalar x_original = x+0.000002;
+			scalar y_original = y+0.002;
 
-		T.boundaryFieldRef()[patchID] == interfaceTemperature;
+			//Construct the analytical region
+			analyticalRegion nearWallRegion(averageHeatBC,mesh.time().value(),originalDropletSize.value(),assimilationObservation, x_original, y_original);
+			//Get the temperature
+			nearWallRegion.calculateTemperature();
+			scalar interfaceTemperature = nearWallRegion.interfaceTemperature_;
+			//Set the temperature
+			T_patch[faceI] = scalar( (y<0.6) ? interfaceTemperature : 293 );
 
-		scalar interfaceFuel;
-		Droplet.calculateFuel();
-		interfaceFuel = Droplet.interfaceFuel_;
-		if(mesh.time().value()<0.1){interfaceFuel = 0.2;}
-		Info<<"interfaceFuel is "<<interfaceFuel<<endl;
-		composition.Y("C7H16").boundaryFieldRef()[patchID] == interfaceFuel;
+		}
+		Info<<"The temperature changes"<<endl;
+
+		//update the fuel
+		//Define the fuel boundary condition object
+		fvPatchScalarField& fuel_patch = refCast<fvPatchScalarField>(composition.Y("C7H16").boundaryFieldRef()[patchID]);
+
+		//Cast calculated fuel to each cell on the patch
+		forAll(mesh.boundaryMesh()[patchID].faceCentres(), faceI)
+		{
+			//Get the coordinate
+			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
+			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
+			scalar x_original = x+0.000002;
+			scalar y_original = y+0.002;
+
+			//Construct the analytical region
+			analyticalRegion nearWallRegion(averageHeatBC,mesh.time().value(),originalDropletSize.value(),assimilationObservation,x_original, y_original);
+			//Get the fuel
+			nearWallRegion.calculateFuel();
+			scalar interfaceFuel = nearWallRegion.interfaceFuel_;
+			//Set fuel
+			fuel_patch[faceI] = scalar( (y<0.6) ? interfaceFuel : 0 );
+
+		}
+		Info<<"The fuel changes"<<endl;
 
 		Info<<"B number is "<<analyticalRegion::B<<endl;
 

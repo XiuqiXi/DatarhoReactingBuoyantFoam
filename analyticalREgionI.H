@@ -47,33 +47,62 @@ void analyticalRegion::calculateMassFlux(){
 
 }
 
-void analyticalRegion::calculateTemperature(){
-	scalar Part_1;
-	//scalar Part_6;
+void analyticalRegion::calculateStreamwiseVelocity(){
+	if (similarVar>1){
+		streamwiseVelocity_ = 0;
+	}
+	else{
+		streamwiseVelocity_ = u_x*similarVar*pow((1-similarVar), 0.6666666);
+	}
+}
 
-	Part_1 = pow((B + 1),(1 - R / R0));
-	//Part_1 = exp(-m_dot_pp_R*Rsquare/k_g*c_pg/R0);
-	//Part_6 = c_pg*(T_infty-T_boil)+Delta_H*stoi_ratio*Y_O_infty+L;
-	interfaceTemperature_ = L*(Part_1-1)/c_pg+T_boil;;
-	//interfaceTemperature_ = (Part_6*Part_1-L)/c_pg+T_boil;
-	if( interfaceTemperature_ > 800 ){ interfaceTemperature_ = 800; }
+void analyticalRegion::calculateTransverseVelocity(){
+	transverseVelocity_ = 0.002;
+}
+
+void analyticalRegion::calculateTemperature(){
+	if (similarVar>1){
+		interfaceTemperature_ = T_infty;
+	}
+	else{
+		scalar J = pow((1-similarVar), 0.6666666);
+		if (y<y_fl){
+			interfaceTemperature_ = (T_boil-T_infty)*((1-D_c)*J+D_c)+T_infty;
+		}
+		else{
+			interfaceTemperature_ = (T_boil-T_infty)*(D_c/r+1)*J+T_infty;
+		}
+	}
 }
 
 void analyticalRegion::calculateFuel(){
-	scalar Part_2;
-
-	Part_2 = 1 - exp(-m_dot_pp_R * Rsquare / k_g * c_pg / R0);
-	interfaceFuel_ = (1 + stoi_ratio * Y_O_infty) * Part_2 - stoi_ratio * Y_O_infty;
-	if(interfaceFuel_<0){interfaceFuel_ = 0.01;}
-
+	if (similarVar>1){
+		interfaceFuel_ = 0;
+	}
+	else{
+		if (y<y_fl){
+			scalar J = pow((1-similarVar), 0.6666666);
+			interfaceFuel_ = Y_fw*((1+r)*J-r);
+		}
+		else{
+			interfaceFuel_ = 0;
+		}
+	}
 }
 
 void analyticalRegion::calculateOxygen(){
-	scalar Part_5;
-
-	Part_5 = exp(-m_dot_pp_R * Rsquare / k_g * c_pg/R0) - 1;
-
-	interfaceOxygen_ = (1+stoi_ratio*Y_O_infty)*Part_5/stoi_ratio+Y_O_infty;
+	if (similarVar>1){
+		interfaceOxygen_ = Y_O_infty;
+	}
+	else{
+		scalar J = pow((1-similarVar), 0.6666666);
+		if (y<y_fl){
+			interfaceOxygen_ = 0;
+		}
+		else{
+			interfaceOxygen_ = Y_O_infty*(1-(1+1/r)*J);
+		}
+	}
 }
 
 void analyticalRegion::calculateAssimilation_FSR()

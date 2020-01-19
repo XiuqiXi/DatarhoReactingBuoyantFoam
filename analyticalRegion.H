@@ -59,6 +59,9 @@ class analyticalRegion
     scalar Time_;
     scalar observation_;
 
+    scalar x;
+    scalar y;
+
 
     scalar R0square;
     scalar R;
@@ -97,14 +100,39 @@ class analyticalRegion
     scalar rho_fl = rho_infty*T_infty/T_fl;
 
     //calcuate assisting parameters
-    scalar inter = 4/5*B*(pow(J_fl, 5/3)-1)-2*(pow(J_fl, 2/3)-1)*(B+tau);
+    scalar inter = 4/5*B*(Foam::pow(J_fl, 1.666666)-1)-2*(Foam::pow(J_fl, 0.666666)-1)*(B+tau);
     scalar M_1 = 48*inter*g*L/c_pg/T_infty;
-    scalar M_2 = -48*mu*log(1+B)/B/rho_boil;
-    scalar M_3 = 40*(B+1)*log(1+B)*k_g/B/c_pg/rho_infty;
+    scalar M_2 = -48*mu*Foam::log(1+B)/B/rho_boil;
+    scalar M_3 = 40*(B+1)*Foam::log(1+B)*k_g/B/c_pg/rho_infty;
 
-    scalar delta_1 = pow((M_3*M_3-M_2*M_3)/M_1,1/4);
+    scalar delta_1 = Foam::pow((M_3*M_3-M_2*M_3)/M_1,0.25);
 
-    scalar u_1 = M_3/pow(((M_3*M_3-M_2*M_3)/M_1), 1/2);
+    scalar u_1 = M_3/Foam::pow(((M_3*M_3-M_2*M_3)/M_1), 0.5);
+
+    scalar zeta_fl = delta_1*Foam::pow(x, 0.25)*(1-Foam::pow(J_fl, 0.666666));
+    scalar zeta_delta = delta_1*Foam::pow(x, 0.25);
+
+    scalar Lambda_1 = (rho_fl-rho_boil)/rho_boil;
+    scalar Lambda_2 = zeta_fl+VSMALL;
+    scalar Lambda = Lambda_1/Lambda_2;
+
+    scalar y_fl  = Lambda*zeta_fl*zeta_fl/2+zeta_fl;
+
+    scalar Delta_1 = 1+2*Lambda*y;
+
+    scalar Pi_1 = (rho_infty-rho_fl)/(zeta_delta-zeta_fl+VSMALL)/rho_boil;
+    scalar Pi_2 = (rho_infty-(rho_infty-rho_fl)/(zeta_delta-zeta_fl+VSMALL)*zeta_delta)/rho_boil;
+    scalar Pi_3 = (-Pi_1/2*zeta_fl*zeta_fl-Pi_2*zeta_fl)+Lambda/2*zeta_fl*zeta_fl+zeta_fl;
+
+    scalar Delta_2 = Pi_2*Pi_2+2*Pi_1*(y-Pi_3);
+
+    scalar zeta = ((y<y_fl) ? ((-1+Foam::pow(Delta_1, 0.5))/(Lambda+VSMALL)) : ((-Pi_2+Foam::pow(Delta_2, 0.5))/(Pi_1+VSMALL)) );
+
+    scalar u_x = u_1*Foam::pow(x, 0.5);
+    scalar delta_x = delta_1*Foam::pow(x, 0.25);
+    scalar similarVar = zeta/(delta_x+VSMALL);
+
+
 
     //p represents prime notation
     scalar q_dot_pp_R;
@@ -122,23 +150,28 @@ public:
 	 scalar R_;
 	 scalar interfaceFuel_;
    scalar interfaceOxygen_;
+   scalar streamwiseVelocity_;
+   scalar transverseVelocity_;
 	 scalar R0;
    scalar targetPara_;
    scalar K_;
    scalar FSR_;
+   scalar testValue = zeta;
 
    static scalar coeff;
 
     // Constructors
 
         //- Construct from Time
-        analyticalRegion(scalar heatFlux, scalar Time, scalar R0Origin, scalar observation);
+        analyticalRegion(scalar heatFlux, scalar Time, scalar R0Origin, scalar observation, scalar x_original, scalar y_original);
 
 
 	// Member functions
 
   //scalar calculateJ();
 	void calculateMassFlux();
+  void calculateStreamwiseVelocity();
+  void calculateTransverseVelocity();
 	void calculateTemperature();
 	void calculateFuel();
   void calculateOxygen();
@@ -160,17 +193,17 @@ analyticalRegion::analyticalRegion
     scalar heatFlux,
     scalar Time,
     scalar R0Origin,
-    scalar observation
-    //scalar x_original,
-    //scalar y_original
+    scalar observation,
+    scalar x_original,
+    scalar y_original
 )
 {
     heatFlux_ = heatFlux;
     Time_ = Time;
     R0 = R0Origin;
     observation_ = observation;
-    //x = x_original;
-    //y = y_original;
+    y = x_original;
+    x = y_original;
 }
 
 

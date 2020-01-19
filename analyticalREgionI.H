@@ -5,7 +5,7 @@ void analyticalRegion::calculateMassFlux(){
 
 	R0square=sqr(R0);
 
-	K = 2 * k_g / rho_l / c_pg * log(B + 1);
+	K = 2 * k_g / rho_l / c_pg * Foam::log(B + 1);
 	Info<<"The liquid density is "<<rho_l<<endl;
 	K_ = K;
 	B_ = B;

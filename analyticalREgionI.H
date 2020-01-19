@@ -11,7 +11,17 @@ void analyticalRegion::calculateStreamwiseVelocity(){
 }
 
 void analyticalRegion::calculateTransverseVelocity(){
-	transverseVelocity_ = 0.002;
+	scalar v_sureface =  3*Foam::log(B+1)*k_g/2/c_pg/rho_boil/delta_1/pow(x, 0.25);
+	if (similarVar>1){
+		streamwiseVelocity_ = 0;
+	}
+	else{
+		transverseVelocity_ = v_sureface+((u_1*(delta_1*pow(x, 0.25) - zeta)*\
+		Foam::sqrt(1 - zeta/(delta_1*pow(x, 0.25))+VSMALL)*(12*delta_1*delta_1*Foam::sqrt(x)+18*delta_1*pow(x, 0.25)*zeta + 5*zeta*zeta))/\
+		(140*delta_1*delta_1*x+VSMALL))-3*delta_1*u_1/35/pow(x, 0.25);
+;
+	}
+	if (transverseVelocity_<0){transverseVelocity_ = 0;}
 }
 
 void analyticalRegion::calculateTemperature(){

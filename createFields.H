@@ -185,18 +185,15 @@ IOdictionary analyticalRegionProperties
     )
 );
 
-dimensionedScalar originalDropletSize
+dimensionedScalar originalPyrolsisLength
 (
-	"originalDropletSize",
-	analyticalRegionProperties.lookup("originalDropletSize")
+	"originalPyrolsisLength",
+	analyticalRegionProperties.lookup("originalPyrolsisLength")
 );
 
 
-//bool assimilationActivation = readBool(analyticalRegionProperties.lookup("assimilationActivation"));
+bool assimilationActivation = readBool(analyticalRegionProperties.lookup("assimilationActivation"));
 
-//word assimilationDataType = word(analyticalRegionProperties.lookup("assimilationDataType"));
-
-//word assimilationDataName = word(analyticalRegionProperties.lookup("assimilationDataName"));
 
 word interfaceName = word(analyticalRegionProperties.lookup("interface"));
 

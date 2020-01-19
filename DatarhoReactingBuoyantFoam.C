@@ -44,6 +44,7 @@ Description
 #include "OFstream.H"
 #include "fixedValueFvPatchField.H"
 #include "analyticalRegion.H"
+#include "condensedRegion.H"
 #include "Countlines.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

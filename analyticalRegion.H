@@ -26,11 +26,11 @@ Class
 
 
 Description
-	Analytical solutions to the fuel droplet combustion problems. The region provides the conditions for the interface.
+	Analytical solutions to the boundary layer flame spread problems. The region provides the conditions for the interface.
 
 
 SourceFiles
-    analyticalRegion.C
+    analyticalRegion.H
 
 \*---------------------------------------------------------------------------*/
 
@@ -50,22 +50,10 @@ class analyticalRegion
 {
 
 
-    //Static Menmbers
-
-    //static scalar B;
-
     // Private Member
-    scalar heatFlux_;
-    scalar Time_;
-    scalar observation_;
 
     scalar x;
     scalar y;
-
-
-    scalar R0square;
-    scalar R;
-	  scalar Rsquare;
 
     const scalar Delta_H = 44926000;
     const scalar stoi_ratio = 0.32;
@@ -78,14 +66,8 @@ class analyticalRegion
     const scalar rho_infty = 1.225;
     const scalar rho_boil = rho_infty*T_infty/T_boil;
 
-    scalar FSR;
-
-    scalar K;
-
     const scalar k_g = 0.0926;
     const scalar mu = 0.0000176;
-    static scalar rho_l;
-    //scalar rho_g = 1;
     const scalar c_pl = 2240;
     const scalar c_pg = 4220;
     const scalar L = 316000;
@@ -133,50 +115,32 @@ class analyticalRegion
     scalar similarVar = zeta/(delta_x+VSMALL);
 
 
-
-    //p represents prime notation
-    scalar q_dot_pp_R;
-    scalar q_dot_pp_R0;
-    scalar m_dot_pp_R;
-    scalar m_dot_pp_R0;
-
-
 public:
 
-   scalar B_;
-   static scalar B;
-	 scalar massFlux_;
-	 scalar interfaceTemperature_;
-	 scalar R_;
-	 scalar interfaceFuel_;
-   scalar interfaceOxygen_;
-   scalar streamwiseVelocity_;
-   scalar transverseVelocity_;
-	 scalar R0;
-   scalar targetPara_;
-   scalar K_;
-   scalar FSR_;
-   scalar testValue = zeta;
+    scalar B_;
+    static scalar B;
+    scalar interfaceTemperature_;
+    scalar interfaceFuel_;
+    scalar interfaceOxygen_;
+    scalar streamwiseVelocity_;
+    scalar transverseVelocity_;
 
-   static scalar coeff;
+    scalar testValue = zeta;
 
     // Constructors
 
-        //- Construct from Time
-        analyticalRegion(scalar heatFlux, scalar Time, scalar R0Origin, scalar observation, scalar x_original, scalar y_original);
+    //- Construct from Time
+    analyticalRegion(scalar x_original, scalar y_original);
 
 
-	// Member functions
+    // Member functions
 
-  //scalar calculateJ();
-	void calculateMassFlux();
-  void calculateStreamwiseVelocity();
-  void calculateTransverseVelocity();
-	void calculateTemperature();
-	void calculateFuel();
-  void calculateOxygen();
-	void calculateAssimilation_FSR();
-  void calculateAssimilation_dropletSize();
+    //scalar calculateJ();
+    void calculateStreamwiseVelocity();
+    void calculateTransverseVelocity();
+  	void calculateTemperature();
+  	void calculateFuel();
+    void calculateOxygen();
 
     //- Destructor
     ~analyticalRegion();
@@ -190,18 +154,10 @@ public:
 
 analyticalRegion::analyticalRegion
 (
-    scalar heatFlux,
-    scalar Time,
-    scalar R0Origin,
-    scalar observation,
     scalar x_original,
     scalar y_original
 )
 {
-    heatFlux_ = heatFlux;
-    Time_ = Time;
-    R0 = R0Origin;
-    observation_ = observation;
     y = x_original;
     x = y_original;
 }

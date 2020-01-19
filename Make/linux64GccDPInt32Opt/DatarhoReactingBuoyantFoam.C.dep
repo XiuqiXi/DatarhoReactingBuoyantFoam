@@ -805,6 +805,8 @@ $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/writeLocalObjects.H \
 $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/writeObjectsBase.H \
 analyticalRegion.H \
 analyticalREgionI.H \
+condensedRegion.H \
+condensedRegionI.H \
 Countlines.H \
 $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/postProcess.H \
 $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/addRegionOption.H \

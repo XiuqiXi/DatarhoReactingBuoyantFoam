@@ -49,14 +49,6 @@
 		Info<<"The average value of the heat flux  is "<<averageHeatBC<<endl;
 		Info<<endl;
 
-		/*
-		Calculate the mass flux(slove the diffusion problem)
-		*/
-
-		//claim yhe Droplet class
-
-
-		//analyticalRegion Droplet(averageHeatBC,mesh.time().value(),originalDropletSize.value(),assimilationObservation);
 
 
 		//Define the velocity boundary condition object
@@ -73,7 +65,7 @@
 			Info<<"Test"<<endl;
 
 			//Construct the analytical region
-			analyticalRegion nearWallRegion(averageHeatBC,mesh.time().value(),originalDropletSize.value(),assimilationObservation, x_original, y_original);
+			analyticalRegion nearWallRegion(x_original, y_original);
 			Info<<"value is "<<nearWallRegion.testValue<<endl;
 			//Get the velocity
 			nearWallRegion.calculateStreamwiseVelocity();
@@ -103,7 +95,7 @@
 			scalar y_original = y+0.002;
 
 			//Construct the analytical region
-			analyticalRegion nearWallRegion(averageHeatBC,mesh.time().value(),originalDropletSize.value(),assimilationObservation, x_original, y_original);
+			analyticalRegion nearWallRegion(x_original, y_original);
 			//Get the temperature
 			nearWallRegion.calculateTemperature();
 			scalar interfaceTemperature = nearWallRegion.interfaceTemperature_;
@@ -127,7 +119,7 @@
 			scalar y_original = y+0.002;
 
 			//Construct the analytical region
-			analyticalRegion nearWallRegion(averageHeatBC,mesh.time().value(),originalDropletSize.value(),assimilationObservation,x_original, y_original);
+			analyticalRegion nearWallRegion(x_original, y_original);
 			//Get the fuel
 			nearWallRegion.calculateFuel();
 			scalar interfaceFuel = nearWallRegion.interfaceFuel_;
@@ -137,12 +129,35 @@
 		}
 		Info<<"The fuel changes"<<endl;
 
+
+		//update the oxygen
+		//Define the oxygen boundary condition object
+		fvPatchScalarField& oxygen_patch = refCast<fvPatchScalarField>(composition.Y("O2").boundaryFieldRef()[patchID]);
+
+		//Cast calculated oxygen to each cell on the patch
+		forAll(mesh.boundaryMesh()[patchID].faceCentres(), faceI)
+		{
+			//Get the coordinate
+			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
+			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
+			scalar x_original = x+0.000002;
+			scalar y_original = y+0.002;
+
+			//Construct the analytical region
+			analyticalRegion nearWallRegion(x_original, y_original);
+			//Get the oxygen
+			nearWallRegion.calculateOxygen();
+			scalar interfaceOxygen = nearWallRegion.interfaceOxygen_;
+			//Set oxygen
+			oxygen_patch[faceI] = scalar( (y<0.6) ? interfaceOxygen : 0.23 );
+
+		}
+		Info<<"The oxygen changes"<<endl;
+
+
+
 		Info<<"B number is "<<analyticalRegion::B<<endl;
 
-		//Info<<"C3H8 boundary condition is "<<fuel<<endl;
-
-		//calculate the maximun Qdot
-		//functionObjects::fieldMinMax fieldMinMax1();
 
 
 

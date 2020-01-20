@@ -829,6 +829,8 @@ $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/compressibleCreatePhi.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readGravitationalAcceleration.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readhRef.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/gh.H \
+$(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readpRef.H \
+phrghEqn.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createMRF.H \
 $(WM_PROJECT_DIR)/src/thermophysicalModels/radiation/lnInclude/createRadiationModel.H \
 createFieldRefs.H \
@@ -839,7 +841,7 @@ $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/setInitialDeltaT.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/readTimeControls.H \
 setRDeltaT.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/setDeltaT.H \
-$(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/rhoEqn.H \
+rhoEqn.H \
 UEqn.H \
 YEqn.H \
 EEqn.H \

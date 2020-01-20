@@ -74,6 +74,7 @@ reaction->setTurbulence(turbulence());
 #include "readGravitationalAcceleration.H"
 #include "readhRef.H"
 #include "gh.H"
+#include "readpRef.H"
 
 Info<< "Reading field p_rgh\n" << endl;
 volScalarField p_rgh
@@ -89,8 +90,9 @@ volScalarField p_rgh
     mesh
 );
 
-// Force p_rgh to be consistent with p
-p_rgh = p - rho*gh;
+mesh.setFluxRequired(p_rgh.name());
+
+#include "phrghEqn.H"
 
 Info<< "Creating field dpdt\n" << endl;
 volScalarField dpdt

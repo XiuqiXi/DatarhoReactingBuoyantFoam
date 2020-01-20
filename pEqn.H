@@ -37,30 +37,30 @@ while (pimple.correctNonOrthogonal())
 {
     fvScalarMatrix p_rghEqn
     (
-        p_rghDDtEqn
+        fvm::ddt(psi, p_rgh)
+      + fvc::ddt(psi, rho)*gh
+      + fvc::ddt(psi)*pRef
+      + fvc::div(phiHbyA)
       - fvm::laplacian(rhorAUf, p_rgh)
+     ==
+        fvOptions(psi, p_rgh, rho.name())
     );
 
-    p_rghEqn.solve(mesh.solver(p_rgh.select(pimple.finalInnerIter())));
+    p_rghEqn.solve();
 
     if (pimple.finalNonOrthogonalIter())
     {
-        // Calculate the conservative fluxes
         phi = phiHbyA + p_rghEqn.flux();
-
-        // Explicitly relax pressure for momentum corrector
-        p_rgh.relax();
-
-        // Correct the momentum source with the pressure gradient flux
-        // calculated from the relaxed pressure
-        U = HbyA + rAU*fvc::reconstruct((phig + p_rghEqn.flux())/rhorAUf);
+        U = HbyA + rAU*fvc::reconstruct((p_rghEqn.flux() + phig)/rhorAUf);
         U.correctBoundaryConditions();
         fvOptions.correct(U);
-        K = 0.5*magSqr(U);
     }
 }
 
-p = p_rgh + rho*gh;
+p = p_rgh + rho*gh + pRef;
+
+#include "rhoEqn.H"
+#include "compressibleContinuityErrs.H"
 
 // Thermodynamic density update
 thermo.correctRho(psi*p - psip0);
@@ -69,6 +69,3 @@ if (thermo.dpdt())
 {
     dpdt = fvc::ddt(p);
 }
-
-#include "rhoEqn.H"
-#include "compressibleContinuityErrs.H"

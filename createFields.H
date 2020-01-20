@@ -191,6 +191,12 @@ dimensionedScalar originalPyrolsisLength
 	analyticalRegionProperties.lookup("originalPyrolsisLength")
 );
 
+dimensionedScalar pyrolysisStartPosition
+(
+	"pyrolysisStartPosition",
+	analyticalRegionProperties.lookup("pyrolysisStartPosition")
+);
+
 
 bool assimilationActivation = readBool(analyticalRegionProperties.lookup("assimilationActivation"));
 

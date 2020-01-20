@@ -6,6 +6,9 @@
 				FatalError << "patch not found!" << exit(FatalError);
 		}
 
+		scalar pyrolysisLowerPosition = pyrolysisStartPosition.value();
+		scalar pyrolysisUpperPosition = pyrolysisLowerPosition+originalPyrolsisLength.value();
+
 
 		//calculate the heat flux of the inerface
 		volScalarField& he = thermo.he();
@@ -19,16 +22,7 @@
 
 		const surfaceScalarField::Boundary& heatFluxBf = heatFlux.boundaryField();
 
-		//calculate the mass flux of the interface
-
-		scalar averageHeatBC = 0;
-		scalar averageMassBC = 0;
-
-		scalar minHfp = 0;
-		scalar maxHfp = 0;
-		scalar meanHfp = 0;
-
-		//find the cylinder patch to calculate the heat flux
+		//find the interface patch to calculate the heat flux
 		wallHeatFluxBf[patchID] = heatFluxBf[patchID];
 		wallHeatFlux = -wallHeatFlux;
 		const scalarField& hfp = wallHeatFlux.boundaryField()[patchID];
@@ -50,14 +44,6 @@
 		}
 
 
-		//the average heat
-		minHfp = gMin(hfp);
-		maxHfp = gMax(hfp);
-		meanHfp = (minHfp+maxHfp)/2;
-		averageHeatBC = meanHfp;
-
-
-
 		//Define the velocity boundary condition object
 		fvPatchVectorField& U_patch = refCast<fvPatchVectorField>(U.boundaryFieldRef()[patchID]);
 
@@ -68,22 +54,29 @@
 			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
 			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
 			scalar x_original = x+0.000002;
-			scalar y_original = y+0.002;
+			scalar y_original = y-pyrolysisLowerPosition;
 			//Info<<"Test"<<endl;
 
-			//Construct the analytical region
-			analyticalRegion nearWallRegion(x_original, y_original);
-			//Info<<"value is "<<nearWallRegion.testValue<<endl;
-			//Get the velocity
-			nearWallRegion.calculateStreamwiseVelocity();
-			scalar streamwiseVelocity = nearWallRegion.streamwiseVelocity_;
-			nearWallRegion.calculateTransverseVelocity();
-			scalar transverseVelocity = nearWallRegion.transverseVelocity_;
-			Info<<"x is "<<x_original<<endl;
-			Info<<"y is "<<y_original<<endl;
-			Info<<"V is "<<transverseVelocity<<endl;
-			//Set the velocity
-			U_patch[faceI] = ( (y<0.6) ? vector(streamwiseVelocity, transverseVelocity, 0) : vector(0, 0, 0));
+			if (y<pyrolysisLowerPosition){
+				U_patch[faceI] = vector(0, 0, 0);
+			}
+			else{
+				//Construct the analytical region
+				analyticalRegion nearWallRegion(x_original, y_original);
+				//Info<<"value is "<<nearWallRegion.testValue<<endl;
+				//Get the velocity
+				nearWallRegion.calculateStreamwiseVelocity();
+				scalar streamwiseVelocity = nearWallRegion.streamwiseVelocity_;
+				nearWallRegion.calculateTransverseVelocity();
+				scalar transverseVelocity = nearWallRegion.transverseVelocity_;
+				Info<<"x is "<<x_original<<endl;
+				Info<<"y is "<<y_original<<endl;
+				Info<<"transverseVelocity is "<<transverseVelocity<<endl;
+				Info<<"streamwiseVelocity is "<<streamwiseVelocity<<endl;
+				//Set the velocity
+				U_patch[faceI] = ( (y<pyrolysisUpperPosition)&&(y>pyrolysisLowerPosition)\
+				 ? vector(transverseVelocity, streamwiseVelocity, 0) : vector(0, 0, 0));
+			}
 
 		}
 		Info<<"The velocity changes"<<endl;
@@ -99,15 +92,20 @@
 			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
 			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
 			scalar x_original = x+0.000002;
-			scalar y_original = y+0.002;
+			scalar y_original = y-pyrolysisLowerPosition;
 
-			//Construct the analytical region
-			analyticalRegion nearWallRegion(x_original, y_original);
-			//Get the temperature
-			nearWallRegion.calculateTemperature();
-			scalar interfaceTemperature = nearWallRegion.interfaceTemperature_;
-			//Set the temperature
-			T_patch[faceI] = scalar( (y<0.6) ? interfaceTemperature : 293 );
+			if (y<pyrolysisLowerPosition){
+				T_patch[faceI] = scalar(293);
+			}
+			else{
+				//Construct the analytical region
+				analyticalRegion nearWallRegion(x_original, y_original);
+				//Get the temperature
+				nearWallRegion.calculateTemperature();
+				scalar interfaceTemperature = nearWallRegion.interfaceTemperature_;
+				//Set the temperature
+				T_patch[faceI] = scalar( (y<pyrolysisUpperPosition)&&(y>pyrolysisLowerPosition) ? interfaceTemperature : 293 );
+			}
 
 		}
 		Info<<"The temperature changes"<<endl;
@@ -123,16 +121,20 @@
 			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
 			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
 			scalar x_original = x+0.000002;
-			scalar y_original = y+0.002;
+			scalar y_original = y-pyrolysisLowerPosition;
 
-			//Construct the analytical region
-			analyticalRegion nearWallRegion(x_original, y_original);
-			//Get the fuel
-			nearWallRegion.calculateFuel();
-			scalar interfaceFuel = nearWallRegion.interfaceFuel_;
-			//Set fuel
-			fuel_patch[faceI] = scalar( (y<0.6) ? interfaceFuel : 0 );
-
+			if (y<pyrolysisLowerPosition){
+				fuel_patch[faceI] = scalar(0);
+			}
+			else{
+				//Construct the analytical region
+				analyticalRegion nearWallRegion(x_original, y_original);
+				//Get the fuel
+				nearWallRegion.calculateFuel();
+				scalar interfaceFuel = nearWallRegion.interfaceFuel_;
+				//Set fuel
+				fuel_patch[faceI] = scalar( (y<pyrolysisUpperPosition)&&(y>pyrolysisLowerPosition) ? interfaceFuel : 0 );
+			}
 		}
 		Info<<"The fuel changes"<<endl;
 
@@ -148,16 +150,20 @@
 			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
 			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
 			scalar x_original = x+0.000002;
-			scalar y_original = y+0.002;
+			scalar y_original = y-pyrolysisLowerPosition;
 
-			//Construct the analytical region
-			analyticalRegion nearWallRegion(x_original, y_original);
-			//Get the oxygen
-			nearWallRegion.calculateOxygen();
-			scalar interfaceOxygen = nearWallRegion.interfaceOxygen_;
-			//Set oxygen
-			oxygen_patch[faceI] = scalar( (y<0.6) ? interfaceOxygen : 0.23 );
-
+			if (y<pyrolysisLowerPosition){
+				oxygen_patch[faceI] = scalar(0.23);
+			}
+			else{
+				//Construct the analytical region
+				analyticalRegion nearWallRegion(x_original, y_original);
+				//Get the oxygen
+				nearWallRegion.calculateOxygen();
+				scalar interfaceOxygen = nearWallRegion.interfaceOxygen_;
+				//Set oxygen
+				oxygen_patch[faceI] = scalar( (y<pyrolysisUpperPosition)&&(y>pyrolysisLowerPosition) ? interfaceOxygen : 0.23 );
+			}
 		}
 		Info<<"The oxygen changes"<<endl;
 

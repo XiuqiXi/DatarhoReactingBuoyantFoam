@@ -205,5 +205,14 @@ word interfaceName = word(analyticalRegionProperties.lookup("interface"));
 
 analyticalRegion::B = readScalar(analyticalRegionProperties.lookup("initialBNumber"));
 
+scalar pyrolysisLowerPosition = pyrolysisStartPosition.value();
+scalar pyrolysisUpperPosition = pyrolysisLowerPosition+originalPyrolsisLength.value();
+
+scalar preheatRegionUpperPosition;
+scalar preheatLength;
+scalar currentStepTime;
+scalar timeInterval;
+scalar previousStepTime = 0;
+
 #include "createMRF.H"
 #include "createRadiationModel.H"

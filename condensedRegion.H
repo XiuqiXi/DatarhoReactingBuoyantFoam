@@ -59,7 +59,7 @@ class condensedRegion
     const scalar T_ignition = 393.15;
     const scalar T_infty = 293;
 
-    scalar Time_;
+    scalar timeInterval_;
 
 
 public:
@@ -71,8 +71,8 @@ public:
 
     // Constructors
 
-    //- Construct from Time
-    condensedRegion(scalar heatFlux, scalar Time, scalar preheatLength);
+    //- Construct from timeInterval
+    condensedRegion(scalar heatFlux, scalar timeInterval, scalar preheatLength);
 
 
 	   // Member functions
@@ -94,12 +94,12 @@ public:
 condensedRegion::condensedRegion
 (
     scalar heatFlux,
-    scalar Time,
+    scalar timeInterval,
     scalar preheatLength
 )
 {
     heatFlux_ = heatFlux;
-    Time_ = Time;
+    timeInterval_ = timeInterval;
     preheatLength_ = preheatLength;
 }
 

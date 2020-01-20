@@ -6,10 +6,6 @@
 				FatalError << "patch not found!" << exit(FatalError);
 		}
 
-		scalar pyrolysisLowerPosition = pyrolysisStartPosition.value();
-		scalar pyrolysisUpperPosition = pyrolysisLowerPosition+originalPyrolsisLength.value();
-
-
 		//calculate the heat flux of the inerface
 		volScalarField& he = thermo.he();
 		const volScalarField& alpha = thermo.alpha();
@@ -33,15 +29,67 @@
 			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
 			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
 			//Find the location of preheat ergion
-			/*if (hfp[faceI]>10000){
-				Info<<"The location of preheat region is "<<y<<endl;
-				break;
-			}*/
-
-			Info<<hfp[faceI]<<endl;
-			//Info<<y<<endl;
-
+			if(y>pyrolysisUpperPosition){
+				if ((hfp[faceI])<8000){
+					Info<<"The location of preheat region is "<<y<<endl;
+					preheatRegionUpperPosition = y;
+					preheatLength = y-pyrolysisUpperPosition;
+					if (mesh.time().value()<0.001){preheatLength = 0;}
+					break;
+				}
+			}
 		}
+
+		currentStepTime = mesh.time().value();
+		timeInterval = currentStepTime-previousStepTime;
+		previousStepTime = currentStepTime;
+
+		//construct condensed condensed region
+		condensedRegion solidPanel(gMax(hfp), timeInterval, preheatLength);
+		solidPanel.pyrolysisLengthIncrease_thermally_thick();
+		pyrolysisUpperPosition = pyrolysisUpperPosition+solidPanel.pyrolysisLengthIncrease_;
+		//pyrolysisUpperPosition = 0.13;
+
+		std::ofstream file_pyrolysisUpperPosition;
+
+		file_pyrolysisUpperPosition.open("pyrolysisUpperPosition", std::ofstream::out | std::ofstream::app);
+
+		file_pyrolysisUpperPosition<<runTime.timeName()<<token::TAB<<"Preheat Length "<<preheatLength<<token::TAB\
+		<<"timeInterval "<<timeInterval<<token::TAB\
+		<<"pyrolysisUpperPosition "<<pyrolysisUpperPosition<<token::TAB\
+		<<"solidPanel.pyrolysisLengthIncrease_ "<<solidPanel.pyrolysisLengthIncrease_<<token::TAB\
+		<<"gMax(hfp) "<<gMax(hfp)<<token::TAB<<std::endl;
+
+		file_pyrolysisUpperPosition.close();
+
+		//update the fuel
+		//Define the fuel boundary condition object
+		fvPatchScalarField& fuel_patch = refCast<fvPatchScalarField>(composition.Y("C7H16").boundaryFieldRef()[patchID]);
+
+		//Cast calculated fuel to each cell on the patch
+		forAll(mesh.boundaryMesh()[patchID].faceCentres(), faceI)
+		{
+			//Get the coordinate
+			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
+			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
+			scalar x_original = x+0.000002;
+			scalar y_original = y-pyrolysisLowerPosition;
+
+			if (y<pyrolysisLowerPosition){
+				fuel_patch[faceI] = scalar(0);
+			}
+			else{
+				//Construct the analytical region
+				analyticalRegion nearWallRegion(x_original, y_original);
+				//Get the fuel
+				nearWallRegion.calculateFuel();
+				scalar interfaceFuel = nearWallRegion.interfaceFuel_;
+				//Set fuel
+				fuel_patch[faceI] = scalar( (y<pyrolysisUpperPosition)&&(y>pyrolysisLowerPosition) ? interfaceFuel : 0 );
+			}
+		}
+		Info<<"The fuel changes"<<endl;
+		Info<<pyrolysisUpperPosition<<endl;
 
 
 		//Define the velocity boundary condition object
@@ -67,12 +115,10 @@
 				//Get the velocity
 				nearWallRegion.calculateStreamwiseVelocity();
 				scalar streamwiseVelocity = nearWallRegion.streamwiseVelocity_;
+				Info<<"The streamwiseVelocity is "<<streamwiseVelocity<<endl;
 				nearWallRegion.calculateTransverseVelocity();
 				scalar transverseVelocity = nearWallRegion.transverseVelocity_;
-				Info<<"x is "<<x_original<<endl;
-				Info<<"y is "<<y_original<<endl;
-				Info<<"transverseVelocity is "<<transverseVelocity<<endl;
-				Info<<"streamwiseVelocity is "<<streamwiseVelocity<<endl;
+				Info<<"The transverseVelocity is "<<transverseVelocity<<endl;
 				//Set the velocity
 				U_patch[faceI] = ( (y<pyrolysisUpperPosition)&&(y>pyrolysisLowerPosition)\
 				 ? vector(transverseVelocity, streamwiseVelocity, 0) : vector(0, 0, 0));
@@ -109,34 +155,6 @@
 
 		}
 		Info<<"The temperature changes"<<endl;
-
-		//update the fuel
-		//Define the fuel boundary condition object
-		fvPatchScalarField& fuel_patch = refCast<fvPatchScalarField>(composition.Y("C7H16").boundaryFieldRef()[patchID]);
-
-		//Cast calculated fuel to each cell on the patch
-		forAll(mesh.boundaryMesh()[patchID].faceCentres(), faceI)
-		{
-			//Get the coordinate
-			const scalar x = mesh.boundaryMesh()[patchID].faceCentres()[faceI].x();
-			const scalar y = mesh.boundaryMesh()[patchID].faceCentres()[faceI].y();
-			scalar x_original = x+0.000002;
-			scalar y_original = y-pyrolysisLowerPosition;
-
-			if (y<pyrolysisLowerPosition){
-				fuel_patch[faceI] = scalar(0);
-			}
-			else{
-				//Construct the analytical region
-				analyticalRegion nearWallRegion(x_original, y_original);
-				//Get the fuel
-				nearWallRegion.calculateFuel();
-				scalar interfaceFuel = nearWallRegion.interfaceFuel_;
-				//Set fuel
-				fuel_patch[faceI] = scalar( (y<pyrolysisUpperPosition)&&(y>pyrolysisLowerPosition) ? interfaceFuel : 0 );
-			}
-		}
-		Info<<"The fuel changes"<<endl;
 
 
 		//update the oxygen

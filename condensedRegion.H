@@ -56,7 +56,7 @@ class condensedRegion
     const scalar c = 2100;
     scalar d = 0.001;
 
-    const scalar T_ignition = 393.15;
+    const scalar T_ignition = 651.15;
     const scalar T_infty = 293;
 
     scalar timeInterval_;

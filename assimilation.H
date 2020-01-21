@@ -54,11 +54,12 @@
 
 		file_pyrolysisUpperPosition.open("pyrolysisUpperPosition", std::ofstream::out | std::ofstream::app);
 
-		file_pyrolysisUpperPosition<<runTime.timeName()<<token::TAB<<"Preheat Length "<<preheatLength<<token::TAB\
-		<<"timeInterval "<<timeInterval<<token::TAB\
-		<<"pyrolysisUpperPosition "<<pyrolysisUpperPosition<<token::TAB\
-		<<"solidPanel.pyrolysisLengthIncrease_ "<<solidPanel.pyrolysisLengthIncrease_<<token::TAB\
-		<<"gMax(hfp) "<<gMax(hfp)<<token::TAB<<std::endl;
+		file_pyrolysisUpperPosition<<runTime.timeName()<<token::TAB<<\
+		preheatLength<<token::TAB\
+		<<timeInterval<<token::TAB\
+		<<pyrolysisUpperPosition<<token::TAB\
+		<<solidPanel.pyrolysisLengthIncrease_<<token::TAB\
+		<<gMax(hfp)<<token::TAB<<std::endl;
 
 		file_pyrolysisUpperPosition.close();
 

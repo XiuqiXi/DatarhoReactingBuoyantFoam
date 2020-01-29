@@ -1,6 +1,6 @@
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-
+//calculate the streamwise velocity
 void analyticalRegion::calculateStreamwiseVelocity(){
 	if (similarVar>1){
 		streamwiseVelocity_ = 0;
@@ -10,6 +10,7 @@ void analyticalRegion::calculateStreamwiseVelocity(){
 	}
 }
 
+//calculate the transverse velocity
 void analyticalRegion::calculateTransverseVelocity(){
 	scalar v_sureface =  3*Foam::log(B+1)*k_g/2/c_pg/rho_boil/delta_1/pow(x, 0.25);
 	if (similarVar>1){
@@ -24,6 +25,7 @@ void analyticalRegion::calculateTransverseVelocity(){
 	if (transverseVelocity_<0){transverseVelocity_ = 0;}
 }
 
+//calculate the temperature
 void analyticalRegion::calculateTemperature(){
 	if (similarVar>1){
 		interfaceTemperature_ = T_infty;
@@ -39,6 +41,7 @@ void analyticalRegion::calculateTemperature(){
 	}
 }
 
+//calculate the fuel
 void analyticalRegion::calculateFuel(){
 	if (similarVar>1){
 		interfaceFuel_ = 0;
@@ -54,6 +57,7 @@ void analyticalRegion::calculateFuel(){
 	}
 }
 
+//calculate the oxygen
 void analyticalRegion::calculateOxygen(){
 	if (similarVar>1){
 		interfaceOxygen_ = Y_O_infty;

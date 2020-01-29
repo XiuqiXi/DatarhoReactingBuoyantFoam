@@ -175,6 +175,7 @@ volScalarField wallMassFlux
     dimensionedScalar("wallMassFlux", dimMass/pow3(dimTime), 0.0)
 );
 
+//create the interface for the initial properties
 IOdictionary analyticalRegionProperties
 (
     IOobject
@@ -187,12 +188,14 @@ IOdictionary analyticalRegionProperties
     )
 );
 
+//initiate the original pyrolysis length
 dimensionedScalar originalPyrolsisLength
 (
 	"originalPyrolsisLength",
 	analyticalRegionProperties.lookup("originalPyrolsisLength")
 );
 
+//initiate the location of the pyrolysis
 dimensionedScalar pyrolysisStartPosition
 (
 	"pyrolysisStartPosition",
@@ -207,6 +210,7 @@ word interfaceName = word(analyticalRegionProperties.lookup("interface"));
 
 analyticalRegion::B = readScalar(analyticalRegionProperties.lookup("initialBNumber"));
 
+//Define the properties of the solid phase
 scalar pyrolysisLowerPosition = pyrolysisStartPosition.value();
 scalar pyrolysisUpperPosition = pyrolysisLowerPosition+originalPyrolsisLength.value();
 

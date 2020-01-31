@@ -116,10 +116,10 @@
 				//Get the velocity
 				nearWallRegion.calculateStreamwiseVelocity();
 				scalar streamwiseVelocity = nearWallRegion.streamwiseVelocity_;
-				Info<<"The streamwiseVelocity is "<<streamwiseVelocity<<endl;
+				//Info<<"The streamwiseVelocity is "<<streamwiseVelocity<<endl;
 				nearWallRegion.calculateTransverseVelocity();
 				scalar transverseVelocity = nearWallRegion.transverseVelocity_;
-				Info<<"The transverseVelocity is "<<transverseVelocity<<endl;
+				//Info<<"The transverseVelocity is "<<transverseVelocity<<endl;
 				//Set the velocity
 				U_patch[faceI] = ( (y<pyrolysisUpperPosition)&&(y>pyrolysisLowerPosition)\
 				 ? vector(transverseVelocity, streamwiseVelocity, 0) : vector(0, 0, 0));

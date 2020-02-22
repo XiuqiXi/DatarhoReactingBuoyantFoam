@@ -94,21 +94,24 @@ class analyticalRegion
     scalar zeta_fl = delta_1*Foam::pow(x, 0.25)*(1-Foam::pow(J_fl, 0.666666));
     scalar zeta_delta = delta_1*Foam::pow(x, 0.25);
 
+    scalar y_fl = 2*rho_boil*zeta_fl/(rho_fl+rho_boil+VSMALL);
+
     scalar Lambda_1 = (rho_fl-rho_boil)/rho_boil;
-    scalar Lambda_2 = zeta_fl+VSMALL;
+    scalar Lambda_2 = y_fl+VSMALL;
     scalar Lambda = Lambda_1/Lambda_2;
 
-    scalar y_fl  = Lambda*zeta_fl*zeta_fl/2+zeta_fl;
+    //scalar Delta_1 = 1+2*Lambda*y;
 
-    scalar Delta_1 = 1+2*Lambda*y;
+    scalar Gamma = Lambda*y_fl*y_fl/2+y_fl;
+    scalar y_delta = (-2*Gamma*rho_boil+rho_infty*y_fl+rho_fl*y_fl+2*rho_boil*zeta_delta)/(rho_infty+rho_fl+VSMALL);
 
-    scalar Pi_1 = (rho_infty-rho_fl)/(zeta_delta-zeta_fl+VSMALL)/rho_boil;
-    scalar Pi_2 = (rho_infty-(rho_infty-rho_fl)/(zeta_delta-zeta_fl+VSMALL)*zeta_delta)/rho_boil;
-    scalar Pi_3 = (-Pi_1/2*zeta_fl*zeta_fl-Pi_2*zeta_fl)+Lambda/2*zeta_fl*zeta_fl+zeta_fl;
+    scalar Pi_1 = (rho_infty-rho_fl)/(y_delta-y_fl+VSMALL)/rho_boil;
+    scalar Pi_2 = (rho_infty-(rho_infty-rho_fl)/(y_delta-y_fl+VSMALL)*y_delta)/rho_boil;
+    scalar Pi_3 = Gamma-(Pi_1*y_fl*y_fl/2+Pi_2*y_fl);
 
-    scalar Delta_2 = Pi_2*Pi_2+2*Pi_1*(y-Pi_3);
+    //scalar Delta_2 = Pi_2*Pi_2+2*Pi_1*(y-Pi_3);
 
-    scalar zeta = ((y<y_fl) ? ((-1+Foam::pow(Delta_1, 0.5))/(Lambda+VSMALL)) : ((-Pi_2+Foam::pow(Delta_2, 0.5))/(Pi_1+VSMALL)) );
+    scalar zeta = ((y<y_fl) ? (Lambda*y*y/2+y) : (Pi_1*y*y/2+Pi_2*y+Pi_3) );
 
     scalar u_x = u_1*Foam::pow(x, 0.5);
     scalar delta_x = delta_1*Foam::pow(x, 0.25);

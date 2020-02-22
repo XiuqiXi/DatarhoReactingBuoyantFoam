@@ -100,7 +100,6 @@ class analyticalRegion
     scalar Lambda_2 = y_fl+VSMALL;
     scalar Lambda = Lambda_1/Lambda_2;
 
-    //scalar Delta_1 = 1+2*Lambda*y;
 
     scalar Gamma = Lambda*y_fl*y_fl/2+y_fl;
     scalar y_delta = (-2*Gamma*rho_boil+rho_infty*y_fl+rho_fl*y_fl+2*rho_boil*zeta_delta)/(rho_infty+rho_fl+VSMALL);
@@ -108,8 +107,6 @@ class analyticalRegion
     scalar Pi_1 = (rho_infty-rho_fl)/(y_delta-y_fl+VSMALL)/rho_boil;
     scalar Pi_2 = (rho_infty-(rho_infty-rho_fl)/(y_delta-y_fl+VSMALL)*y_delta)/rho_boil;
     scalar Pi_3 = Gamma-(Pi_1*y_fl*y_fl/2+Pi_2*y_fl);
-
-    //scalar Delta_2 = Pi_2*Pi_2+2*Pi_1*(y-Pi_3);
 
     scalar zeta = ((y<y_fl) ? (Lambda*y*y/2+y) : (Pi_1*y*y/2+Pi_2*y+Pi_3) );
 

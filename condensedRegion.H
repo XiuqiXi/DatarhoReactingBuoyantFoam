@@ -67,6 +67,7 @@ public:
     scalar heatFlux_;
     scalar preheatLength_;
     scalar pyrolysisLengthIncrease_;
+    static scalar C;
 
 
     // Constructors

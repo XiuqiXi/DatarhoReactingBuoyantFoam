@@ -63,6 +63,14 @@
 
 		file_pyrolysisUpperPosition.close();
 
+		std::ofstream file_pyrolysis;
+
+		file_pyrolysis.open("pyrolysis", std::ofstream::out | std::ofstream::app);
+
+		file_pyrolysis<<pyrolysisUpperPosition-0.13<<std::endl;
+
+		file_pyrolysis.close();
+
 		//update the fuel
 		//Define the fuel boundary condition object
 		fvPatchScalarField& fuel_patch = refCast<fvPatchScalarField>(composition.Y("C7H16").boundaryFieldRef()[patchID]);
